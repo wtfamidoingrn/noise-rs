@@ -1,5 +1,6 @@
 use crate::noise_fns::NoiseFn;
 use core::marker::PhantomData;
+use crate::NoiseFnSync;
 
 /// Noise function that outputs the sum of the two output values from two source
 /// functions.

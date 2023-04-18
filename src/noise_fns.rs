@@ -1,7 +1,8 @@
+use alloc::boxed::Box;
+
 pub use self::{
     cache::*, combiners::*, generators::*, modifiers::*, selectors::*, transformers::*,
 };
-use alloc::boxed::Box;
 
 mod cache;
 mod combiners;
@@ -28,8 +29,8 @@ pub trait NoiseFn<T, const DIM: usize> {
 }
 
 impl<'a, T, M, const DIM: usize> NoiseFn<T, DIM> for &'a M
-where
-    M: NoiseFn<T, DIM> + ?Sized,
+    where
+        M: NoiseFn<T, DIM> + ?Sized,
 {
     #[inline]
     fn get(&self, point: [T; DIM]) -> f64 {
@@ -38,8 +39,8 @@ where
 }
 
 impl<T, M, const DIM: usize> NoiseFn<T, DIM> for Box<M>
-where
-    M: NoiseFn<T, DIM> + ?Sized,
+    where
+        M: NoiseFn<T, DIM> + ?Sized,
 {
     #[inline]
     fn get(&self, point: [T; DIM]) -> f64 {
@@ -54,4 +55,14 @@ pub trait Seedable {
 
     /// Getter to retrieve the seed from the function
     fn seed(&self) -> u32;
+}
+
+pub trait NoiseFnSync<T, const DIM: usize> where T: Send + Sync {
+    fn get(&self, point: [T; DIM]) -> f64;
+}
+
+impl<T, N, const DIM: usize> NoiseFnSync<T, DIM> for N where N: NoiseFn<T, DIM> + Send + Sync, T: Send + Sync {
+    fn get(&self, point: [T; DIM]) -> f64 {
+        NoiseFn::get(self, point)
+    }
 }
