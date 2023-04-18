@@ -57,7 +57,7 @@ pub trait Seedable {
     fn seed(&self) -> u32;
 }
 
-pub trait NoiseFnSync<T, const DIM: usize> where T: Send + Sync {
+pub trait NoiseFnSync<T, const DIM: usize>: Send + Sync where T: Send + Sync {
     fn get(&self, point: [T; DIM]) -> f64;
 }
 
